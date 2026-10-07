@@ -1,0 +1,29 @@
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# Node / frontend build
+node_modules/
+dist/
+*.tsbuildinfo
+
+# Local tool settings
+.claude/
+.vscode/
+.idea/
+
+# Provided data pack (not committed; graders add it locally)
+data/campus_customs.db
+data/products/
+
+# OS / logs
+.DS_Store
+Thumbs.db
+*.log

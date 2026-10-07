@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Campus Customs: App Check (Problem 11)</title>
+  <style>
+    body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: #faf8f3; color: #1b2433; line-height: 1.55; }
+    header { background: #00356b; color: #fff; padding: 32px 24px; }
+    header h1 { margin: 0 0 6px; font-family: Georgia, serif; font-size: 2rem; }
+    header p { margin: 0; opacity: 0.85; }
+    main { max-width: 1100px; margin: 0 auto; padding: 24px; }
+    .summary { background: #fff; border: 1px solid #e3ddd0; border-radius: 12px; padding: 16px 20px; margin-bottom: 28px; }
+    .summary ul { margin: 8px 0 0; padding-left: 20px; }
+    section { background: #fff; border: 1px solid #e3ddd0; border-radius: 14px; padding: 24px; margin-bottom: 32px; }
+    section h2 { margin: 0 0 4px; font-family: Georgia, serif; color: #00356b; font-size: 1.5rem; }
+    .status { display: inline-block; background: #e8f6ee; color: #12754a; font-weight: 700; font-size: 0.85rem; padding: 3px 10px; border-radius: 999px; margin-bottom: 12px; }
+    .proof { font-size: 1.02rem; margin: 0 0 16px; }
+    figure { margin: 0 0 16px; }
+    figure img { width: 100%; border: 1px solid #dbe3ee; border-radius: 10px; box-shadow: 0 6px 18px rgba(0,33,71,0.10); }
+    figcaption { font-size: 0.88rem; color: #5d6878; margin-top: 6px; }
+    code { background: #e6eef8; color: #00356b; padding: 1px 6px; border-radius: 4px; font-size: 0.9em; }
+    footer { text-align: center; color: #5d6878; font-size: 0.85rem; padding: 0 24px 32px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Campus Customs: App Check</h1>
+    <p>MGT 409 Homework 4, Problem 11. Screenshots captured from the running app (React frontend on localhost:5173 + FastAPI backend on localhost:8000) on 2026-10-06.</p>
+  </header>
+
+  <main>
+    <div class="summary">
+      <strong>Result: all 3 checks passed.</strong>
+      <ul>
+        <li>Screenshots were taken automatically with Playwright (Microsoft Edge, headless), each as a fresh guest visitor, after waiting for the real AI agent reply.</li>
+        <li>Every number shown was compared with <code>data/campus_customs.db</code> at capture time.</li>
+      </ul>
+    </div>
+
+    <!-- Check 1 -->
+    <section id="inventory">
+      <h2>1. Chat checks the inventory level of a real item</h2>
+      <span class="status">PASSED</span>
+      <p class="proof">
+        Asked in chat: <em>"Do you have the Baseball Left Chest Crewneck in XS or M? How many are in stock and what is the price?"</em>
+        The agent replied <strong>"$58.00. Size XS is out of stock; size M has 5 in stock"</strong>. This matches the database exactly (price 58.0, XS = 0, M = 5), including honestly reporting the sold-out size.
+      </p>
+      <figure>
+        <img src="app_check_images/inventory.png" alt="Chat answering the stock and price question on the Baseball Left Chest Crewneck product page" />
+        <figcaption>The agent's answer in the chat widget, on that product's page.</figcaption>
+      </figure>
+      <figure>
+        <img src="app_check_images/inventory_sizes.png" alt="Product page size tiles: XS sold out, S 15, M only 5 left, L 25, XL sold out, XXL 25" />
+        <figcaption>The same product's size tiles (loaded from the database) show $58.00, XS sold out and M "Only 5 left", the same values the chat gave.</figcaption>
+      </figure>
+    </section>
+
+    <!-- Check 2 -->
+    <section id="search">
+      <h2>2. Dynamic search result cards after a category question</h2>
+      <span class="status">PASSED</span>
+      <p class="proof">
+        After typing <em>"what hoodies do you have?"</em> on the Home page, the site switched to the Products page and showed <strong>27 product cards</strong> under a "From your chat" banner, next to the agent's text answer.
+        The 27 cards are exactly the 27 hood-type products in the database. They come from the structured <code>products</code> list in the API response, not from parsing the reply text.
+      </p>
+      <figure>
+        <img src="app_check_images/search_cards.png" alt="Chat reply about 27 hoodies with matching product cards shown on the page" />
+        <figcaption>The chat reply ("We have 27 hoodies… Showing 27 products on the page") and the cards it produced.</figcaption>
+      </figure>
+      <figure>
+        <img src="app_check_images/search_cards_grid.png" alt="Grid of hoodie product cards with images, names, prices and short descriptions" />
+        <figcaption>With the chat closed: each card shows image, name, price, and short info, and links to that product's page.</figcaption>
+      </figure>
+    </section>
+
+    <!-- Check 3 -->
+    <section id="filters">
+      <h2>3. Usability feature (Problem 9): product filters and sorting</h2>
+      <span class="status">PASSED</span>
+      <p class="proof">
+        On the Products page, choosing <strong>Category = Hoodies</strong>, <strong>Size in stock = XL</strong>, and <strong>Sort by = Price: low to high</strong> narrowed 102 items to <strong>21</strong>, sorted from $45.00 up to $88.00.
+        The 21 products are exactly those the database lists as hoodies with XL quantity above 0.
+      </p>
+      <figure>
+        <img src="app_check_images/filters.png" alt="Products page with Hoodies, XL and price low to high selected, showing 21 of 102 items" />
+        <figcaption>After filtering: "21 of 102 items", cheapest first (Yale Sports Hoodie Tennis $45.00, then $68.00 hoodies), plus a "Clear filters" button.</figcaption>
+      </figure>
+      <figure>
+        <img src="app_check_images/filters_before.png" alt="Products page before filtering showing 102 of 102 items" />
+        <figcaption>Before filtering, for comparison: all categories, any size, sorted by name, "102 of 102 items".</figcaption>
+      </figure>
+    </section>
+  </main>
+
+  <footer>Screenshots are in <code>app_check_images/</code> next to this file.</footer>
+</body>
+</html>
